@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Order {{ order_id }} - Amazon Seller Central{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Order: {{ order_id }}</h1>
+    <p><a href="/orders" class="link">&larr; Back to Orders</a></p>
+</div>
+
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+
+{% if order %}
+<div class="grid">
+    <div class="stat-card">
+        <div class="label">Status</div>
+        <div class="value" style="font-size: 20px;">{{ order.get('OrderStatus', 'N/A') }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="label">Order Total</div>
+        <div class="value" style="font-size: 20px;">{{ order.get('OrderTotal', {}).get('CurrencyCode', '') }} {{ order.get('OrderTotal', {}).get('Amount', 'N/A') }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="label">Purchase Date</div>
+        <div class="value" style="font-size: 16px;">{{ order.get('PurchaseDate', 'N/A')[:19] }}</div>
+    </div>
+</div>
+
+<div class="card">
+    <h3>Order Details</h3>
+    <table>
+        <tr><th style="width:200px">Fulfillment Channel</th><td>{{ order.get('FulfillmentChannel', 'N/A') }}</td></tr>
+        <tr><th>Sales Channel</th><td>{{ order.get('SalesChannel', 'N/A') }}</td></tr>
+        <tr><th>Ship Service</th><td>{{ order.get('ShipServiceLevel', 'N/A') }}</td></tr>
+        <tr><th>Payment Method</th><td>{{ order.get('PaymentMethod', 'N/A') }}</td></tr>
+        <tr><th>Shipping Address</th><td>{{ order.get('ShippingAddress', {}).get('City', '') }}, {{ order.get('ShippingAddress', {}).get('StateOrRegion', '') }} {{ order.get('ShippingAddress', {}).get('PostalCode', '') }}</td></tr>
+    </table>
+</div>
+{% endif %}
+
+{% if items %}
+<div class="card">
+    <h3>Line Items</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>ASIN</th>
+                <th>SKU</th>
+                <th>Title</th>
+                <th>Qty</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.get('ASIN', '') }}</td>
+                <td>{{ item.get('SellerSKU', '') }}</td>
+                <td>{{ item.get('Title', 'N/A') }}</td>
+                <td>{{ item.get('QuantityOrdered', 0) }}</td>
+                <td>{{ item.get('ItemPrice', {}).get('CurrencyCode', '') }} {{ item.get('ItemPrice', {}).get('Amount', 'N/A') }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Inventory - Amazon Seller Central{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>FBA Inventory</h1>
+    <p>Your Fulfillment by Amazon inventory levels</p>
+</div>
+
+<div class="form-inline">
+    <form method="get" style="display: flex; gap: 10px; align-items: center;">
+        <input type="text" name="sku" value="{{ sku_filter }}" placeholder="Filter by SKU (optional)">
+        <button type="submit" class="btn btn-primary">Search</button>
+        {% if sku_filter %}
+        <a href="/inventory" class="btn btn-secondary">Clear</a>
+        {% endif %}
+    </form>
+</div>
+
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+
+<div class="card">
+    {% if inventory %}
+    <table>
+        <thead>
+            <tr>
+                <th>SKU</th>
+                <th>ASIN</th>
+                <th>FNSKU</th>
+                <th>Product Name</th>
+                <th>Fulfillable</th>
+                <th>Inbound</th>
+                <th>Reserved</th>
+                <th>Condition</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in inventory %}
+            <tr>
+                <td>{{ item.get('sellerSku', '') }}</td>
+                <td>{{ item.get('asin', '') }}</td>
+                <td>{{ item.get('fnSku', '') }}</td>
+                <td>{{ item.get('productName', 'N/A') }}</td>
+                <td><strong>{{ item.get('fulfillableQuantity', 0) }}</strong></td>
+                <td>{{ item.get('inventoryDetails', {}).get('inboundWorkingQuantity', 0) }}</td>
+                <td>{{ item.get('inventoryDetails', {}).get('reservedQuantity', {}).get('totalReservedQuantity', 0) }}</td>
+                <td>{{ item.get('condition', 'N/A') }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty">
+        <p>No inventory data found.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

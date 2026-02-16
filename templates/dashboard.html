@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - Amazon Seller Central{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Seller Central Dashboard</h1>
+    <p>Connected to Amazon SP-API</p>
+</div>
+
+<div class="grid">
+    <div class="stat-card">
+        <div class="label">Connection Status</div>
+        <div class="value">
+            {% if configured %}
+            <span style="color: #1a7a1a;">Connected</span>
+            {% else %}
+            <span style="color: #c62828;">Not Configured</span>
+            {% endif %}
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="label">Marketplace</div>
+        <div class="value">{{ marketplace }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="label">Seller ID</div>
+        <div class="value" style="font-size: 16px;">{{ seller_id }}</div>
+    </div>
+</div>
+
+{% if not configured %}
+<div class="alert alert-danger">
+    <strong>Credentials not configured.</strong> Copy <code>.env.example</code> to <code>.env</code> and fill in your Amazon SP-API credentials to get started.
+</div>
+{% endif %}
+
+<div class="card">
+    <h3>Quick Links</h3>
+    <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 10px;">
+        <a href="/orders" class="btn btn-primary">View Orders</a>
+        <a href="/inventory" class="btn btn-primary">Check Inventory</a>
+        <a href="/catalog" class="btn btn-secondary">Search Catalog</a>
+        <a href="/reports" class="btn btn-secondary">Request Reports</a>
+    </div>
+</div>
+
+<div class="card">
+    <h3>Setup Guide</h3>
+    <ol style="padding-left: 20px; line-height: 2;">
+        <li>Register as a developer in <strong>Seller Central > Apps & Services > Develop Apps</strong></li>
+        <li>Create an SP-API application and note your <strong>LWA App ID</strong> and <strong>Client Secret</strong></li>
+        <li>Create an <strong>IAM user</strong> in AWS with SP-API permissions</li>
+        <li>Generate a <strong>refresh token</strong> by self-authorizing your app</li>
+        <li>Copy <code>.env.example</code> to <code>.env</code> and fill in all values</li>
+        <li>Restart this server and start exploring your data!</li>
+    </ol>
+</div>
+{% endblock %}

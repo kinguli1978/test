@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Reports - Amazon Seller Central{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Reports</h1>
+    <p>Request and check Amazon Seller Central reports</p>
+</div>
+
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+
+<div class="grid">
+    <div class="card">
+        <h3>Request a Report</h3>
+        <form method="post">
+            <input type="hidden" name="action" value="request">
+            <div style="margin-bottom: 12px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Report Type</label>
+                <select name="report_type" style="width: 100%;">
+                    {% for value, label in report_types %}
+                    <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Request Report</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h3>Check Report Status</h3>
+        <form method="post">
+            <input type="hidden" name="action" value="check">
+            <div style="margin-bottom: 12px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Report ID</label>
+                <input type="text" name="report_id" placeholder="Enter report ID" style="width: 100%;">
+            </div>
+            <button type="submit" class="btn btn-secondary">Check Status</button>
+        </form>
+    </div>
+</div>
+
+{% if report_info %}
+<div class="card">
+    <h3>Report Details</h3>
+    <table>
+        {% for key, value in report_info.items() %}
+        <tr>
+            <th style="width: 200px;">{{ key }}</th>
+            <td>{{ value }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endif %}
+
+<div class="card">
+    <h3>Available Report Types</h3>
+    <table>
+        <thead>
+            <tr><th>Report</th><th>API Type</th></tr>
+        </thead>
+        <tbody>
+            {% for value, label in report_types %}
+            <tr><td>{{ label }}</td><td><code>{{ value }}</code></td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

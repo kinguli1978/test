@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Orders - Amazon Seller Central{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Orders</h1>
+    <p>Recent orders from your Amazon store</p>
+</div>
+
+<div class="form-inline">
+    <form method="get" style="display: flex; gap: 10px; align-items: center;">
+        <label>Last</label>
+        <input type="number" name="days" value="{{ days }}" min="1" max="90" style="width: 70px;">
+        <label>days</label>
+        <button type="submit" class="btn btn-primary">Refresh</button>
+    </form>
+</div>
+
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+
+<div class="card">
+    {% if orders %}
+    <table>
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Items</th>
+                <th>Total</th>
+                <th>Channel</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td><a href="/orders/{{ order.AmazonOrderId }}" class="link">{{ order.AmazonOrderId }}</a></td>
+                <td>{{ order.get('PurchaseDate', 'N/A')[:10] }}</td>
+                <td>
+                    {% set status = order.get('OrderStatus', 'Unknown') %}
+                    {% if status == 'Shipped' %}
+                    <span class="badge badge-green">{{ status }}</span>
+                    {% elif status == 'Pending' %}
+                    <span class="badge badge-yellow">{{ status }}</span>
+                    {% elif status == 'Unshipped' %}
+                    <span class="badge badge-blue">{{ status }}</span>
+                    {% else %}
+                    <span class="badge badge-gray">{{ status }}</span>
+                    {% endif %}
+                </td>
+                <td>{{ order.get('NumberOfItemsShipped', 0) + order.get('NumberOfItemsUnshipped', 0) }}</td>
+                <td>{{ order.get('OrderTotal', {}).get('CurrencyCode', '') }} {{ order.get('OrderTotal', {}).get('Amount', 'N/A') }}</td>
+                <td>{{ order.get('SalesChannel', 'N/A') }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty">
+        <p>No orders found for the last {{ days }} days.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
